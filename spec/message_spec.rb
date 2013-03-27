@@ -24,7 +24,7 @@ describe Message do
   context '.create' do
     it 'POSTs a message containing name and text to the troll room' do 
       attributes = {:name => 'barry', :message => 'my name is chuck'}
-      stub = stub_request(:post, 'http://localhost:3000/messages').to_return(:status => 200, :body => {:message => attributes}.to_json)
+      stub = stub_request(:post, 'http://trollroom.herokuapp.com/messages').to_return(:status => 200, :body => {:message => attributes}.to_json)
       Message.create(attributes)
       stub.should have_been_requested
     end
@@ -32,12 +32,9 @@ describe Message do
 
   context '.list' do
     it 'request GETs from the database' do
-      stub = stub_request(:get, 'http://localhost:3000/messages').to_return(:status => 200)
+      stub = stub_request(:get, 'http://trollroom.herokuapp.com/messages').to_return(:status => 200)
       Message.list
       stub.should have_been_requested
     end
-    it 'lists the most recent(up to twenty) posts in the troll room'
-
   end
-
 end

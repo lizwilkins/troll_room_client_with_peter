@@ -10,7 +10,7 @@ class Message
 
   def self.create(attributes)
     post_message = Faraday.post do |request|
-      request.url 'http://localhost:3000/messages'  
+      request.url 'http://trollroom.herokuapp.com/messages'  
       request.headers['Content-Type'] = 'application/json'
       request.body = {:message => {:name => attributes['name'], :message => attributes['message']}}.to_json
     end
@@ -18,7 +18,8 @@ class Message
 
   def self.list
     get_messages = Faraday.get do |request|
-      request.url 'http://localhost:3000/messages'  
+      request.url 'http://trollroom.herokuapp.com/messages'  
+      request.body = {:limit => 20}.to_json
     end
     if get_messages.body.nil?
       false
