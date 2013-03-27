@@ -1,0 +1,32 @@
+class Message
+
+  attr_reader :name, :message
+
+  def initialize(attributes)
+    @name = attributes[:name]
+    @message = attributes[:message]
+    
+  end
+
+  def self.create(attributes)
+    post_message = Faraday.post do |request|
+      request.url 'http://localhost:3000/messages'  
+      request.headers['Content-Type'] = 'application/json'
+      request.body = {:message => {:name => attributes['name'], :message => attributes['message']}}.to_json
+    end
+  end
+
+  def self.list
+    get_messages = Faraday.get do |request|
+      request.url 'http://localhost:3000/messages'  
+    end
+    if get_messages.body.nil?
+      false
+    else
+      p JSON.parse(get_messages.body)
+      JSON.parse(get_messages.body).inject([]) do |messages_array, message|        
+        messages_array << Message.new(:name => message['message']['name'], 'message' => message['message']['message'])
+      end
+    end
+  end
+end
