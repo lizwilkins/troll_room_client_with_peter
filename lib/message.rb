@@ -23,9 +23,8 @@ class Message
     if get_messages.body.nil?
       false
     else
-      p JSON.parse(get_messages.body)
       JSON.parse(get_messages.body).inject([]) do |messages_array, message|        
-        messages_array << Message.new(:name => message['message']['name'], 'message' => message['message']['message'])
+        messages_array << Message.new(:name => message['message']['name'], :message => message['message']['message'])
       end
     end
   end

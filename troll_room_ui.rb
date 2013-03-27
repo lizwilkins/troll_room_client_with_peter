@@ -12,7 +12,7 @@ puts "Enter 'c' to create a new post, 'v' to view recent posts"
 puts "Enter 'x' to exit."
 
 until choice == 'c' || choice == 'v'
-  p messages = Message.list
+  messages = Message.list
   begin
     Timeout.timeout(1) {choice = gets.chomp}    
   rescue
@@ -24,11 +24,11 @@ if choice == 'c'
   name = gets.chomp
   print 'Type your message and press enter:'
   message = gets.chomp
-  Message.create(:name => name, :message => message)
+  Message.create('name' => name, 'message' => message)
   puts 'Nice message. Good-bye!'
 elsif choice == 'v'
   puts "Here are the 20 most recent posts:"
-  messages.map {|message| puts (message.name + ": " + message.message)}
+  messages.map {|message| puts "#{message.name}:  #{message.message}"}
 end
 
 
