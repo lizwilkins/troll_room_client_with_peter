@@ -5,3 +5,4 @@ require 'json'
 require 'faraday'
 
 require 'message'
+require 'room'

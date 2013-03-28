@@ -2,20 +2,26 @@ require 'timeout'
 require 'faraday'
 require 'json'
 require './lib/message'
+require './lib/room'
 
-puts "Welcome to the Troll Room."
 time = 0 
 choice = nil
-puts "What would you like to do?"
-puts "Enter 'c' to create a new post"
+puts "Enter 'r' to create a new chat room."
+puts "Enter 'c' to create a new post."
+puts "Enter 's' to select a chat room."
 puts "Enter 'x' to exit."
 
+room = nil
 loop do
-  until choice == 'c' || choice == 'x'
-    messages = Message.list
-    puts "\e[H\e[2J"
-    messages.map {|message| puts "> #{message.name}:  #{message.message}"}
-    puts "Enter 'c' to create a new post, 'x' to exit."
+  puts "Welcome to the Chatty Cathy."
+  until choice == 'c' || choice == 'r' || choice == 'e' || choice == 'x'
+    if room != nil
+      messages = room.messages
+      puts "\e[H\e[2J"
+      puts "\nYou are in the #{room.name} Chat Room:\n"
+      messages.map {|message| puts "> #{message.name}:  #{message.message}"}
+    end
+    puts "\nEnter 'c' to create a new post, 'r' to create a new chat room, 'e' to enter a new chat room, 'x' to exit."
 
     begin
       Timeout.timeout(1) {choice = gets.chomp}    
@@ -24,45 +30,33 @@ loop do
   end
 
   if choice == 'c'
-    print 'Type your name and press enter:'
+    if room != nil
+      print 'Type your name and press enter:'
+      name = gets.chomp
+      print 'Type your message and press enter:'
+      message = gets.chomp
+      Message.create('name' => name, 'message' => message, 'room_id' => room.id)
+      choice = nil
+    else
+      print "Enter 'e' to select a chat room."
+      choice = gets.chomp
+    end
+  elsif choice == 'r'
+    rooms = Room.list
+    puts "ID  Chat Room"
+    rooms.map {|room| puts "#{rooms.id} #{rooms.name}"}
+    print 'Type your new chat room name and press enter:'
     name = gets.chomp
-    print 'Type your message and press enter:'
-    message = gets.chomp
-    Message.create('name' => name, 'message' => message)
-    puts 'Nice message. Good-bye!'
+    room = Room.create('name' => name)
+    choice = nil
+  elsif choice == 'e'
+    rooms = Room.list
+    puts "ID  Chat Room"
+    rooms.map {|room| puts "#{room.id} #{room.name}"}
+    print 'Enter the ID of your new chat room and press enter:'   
+    room = Room.find(gets.chomp)
+    choice = nil
   elsif choice == 'x'
     break
   end
-  choice = nil
 end
-
-
-#welcome
-
-#loop do 
-  #   #if wait 
-  #   if timeout?
-  #     messages = Message.all
-  #   elsif choice == 'x'
-  #     break
-  #   elsif choice == 'c'
-  #     create
-  #   elsif choice == 'v'
-  #     puts "Here are the 20 most recent posts:"
-  #     messages.map {|message| puts (message.name + ": " + message.message)}
-
-  #   end
-  # end
-# def create
-#   name = nil
-#   message = nil
-#   while message.nil?
-#     puts "What name would you like include in your post?"
-#     name = gets.chomp
-#     puts "What is the message you would like to post to Troll Room?"
-#     message = gets.chomp
-#     new_name = Message.new({:name => name, :message => message})
-#     message.save
-#   end    
-#   #Test if message was posted and say hurray!
-# end
